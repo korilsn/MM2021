@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DISC-style personality assessment (D, I, S, C). Educational use." />
+  <title>DISC Personality Assessment</title>
+  <!-- Deploy: disc-firebase-hosting/ — Firebase: FIREBASE-HOSTING-SETUP.md · GitHub Pages: GITHUB-PAGES-SETUP.md -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="m-0">
+  <div id="root"></div>
+  <script>
+    // Ported from disc tet.ts — same questions, scoring, and result copy.
+    const questions = [
+      { question: "In a group project, I am usually...", options: [
+        { text: "The leader pushing for results", type: "D" },
+        { text: "The one motivating and talking to everyone", type: "I" },
+        { text: "The peacemaker keeping things steady", type: "S" },
+        { text: "The planner ensuring accuracy", type: "C" }
+      ]},
+      { question: "When facing a challenge, I...", options: [
+        { text: "Tackle it head-on and take charge", type: "D" },
+        { text: "Talk it out and get others excited", type: "I" },
+        { text: "Stay calm and support the team", type: "S" },
+        { text: "Analyze it carefully first", type: "C" }
+      ]},
+      { question: "My friends would describe me as...", options: [
+        { text: "Bold and determined", type: "D" },
+        { text: "Fun and outgoing", type: "I" },
+        { text: "Loyal and patient", type: "S" },
+        { text: "Precise and thoughtful", type: "C" }
+      ]},
+      { question: "I prefer to work...", options: [
+        { text: "Fast and decisively", type: "D" },
+        { text: "With people and energy", type: "I" },
+        { text: "In a stable, predictable way", type: "S" },
+        { text: "Methodically with details", type: "C" }
+      ]},
+      { question: "Under pressure, I...", options: [
+        { text: "Get direct and solve it quickly", type: "D" },
+        { text: "Rally others and stay positive", type: "I" },
+        { text: "Listen and keep harmony", type: "S" },
+        { text: "Focus on facts and quality", type: "C" }
+      ]},
+      { question: "I enjoy...", options: [
+        { text: "Competition and winning", type: "D" },
+        { text: "Meeting new people", type: "I" },
+        { text: "Helping others", type: "S" },
+        { text: "Solving complex problems", type: "C" }
+      ]},
+      { question: "In class discussions, I...", options: [
+        { text: "Speak up assertively", type: "D" },
+        { text: "Share ideas enthusiastically", type: "I" },
+        { text: "Support others' views", type: "S" },
+        { text: "Ask detailed questions", type: "C" }
+      ]},
+      { question: "Change for me is...", options: [
+        { text: "Exciting if it leads to results", type: "D" },
+        { text: "Fun and social", type: "I" },
+        { text: "Something I handle slowly", type: "S" },
+        { text: "Only if it's well-planned", type: "C" }
+      ]},
+      { question: "My leadership style is...", options: [
+        { text: "Decisive and bold", type: "D" },
+        { text: "Inspiring and friendly", type: "I" },
+        { text: "Supportive and team-focused", type: "S" },
+        { text: "Structured and fair", type: "C" }
+      ]},
+      { question: "I value most...", options: [
+        { text: "Getting things done", type: "D" },
+        { text: "Building relationships", type: "I" },
+        { text: "Team harmony", type: "S" },
+        { text: "Accuracy and rules", type: "C" }
+      ]},
+      { question: "When making decisions, I rely on...", options: [
+        { text: "My gut and drive", type: "D" },
+        { text: "Input from people", type: "I" },
+        { text: "Careful listening", type: "S" },
+        { text: "Data and logic", type: "C" }
+      ]},
+      { question: "I am motivated by...", options: [
+        { text: "Challenges and power", type: "D" },
+        { text: "Recognition and fun", type: "I" },
+        { text: "Security and appreciation", type: "S" },
+        { text: "Perfection and expertise", type: "C" }
+      ]}
+    ];
+
+    const resultsData = {
+      D: {
+        title: "Dominance",
+        animal: "Eagle",
+        emoji: "🦅",
+        color: "from-red-500 to-orange-500",
+        bgLight: "bg-red-50",
+        textColor: "text-red-700",
+        summary: "You are bold, driven, and fiercely independent. You thrive on taking charge, making quick decisions, and achieving significant, tangible results. As a natural trailblazer, you aren't afraid of complex challenges or conflict. You push the team forward with a strong sense of urgency, preferring to focus on the big picture rather than getting bogged down in minute details. Your directness helps cut through noise to reach the finish line.",
+        leadership: "They need a leader who provides autonomy, sets challenging goals, and gives direct, bottom-line feedback. They require a hands-off approach that avoids micromanagement and allows them the freedom to take the lead on specific, high-stakes tasks.",
+        jobs: "Entrepreneur, Manager, Director, Sales Lead, Executive.",
+        team: "Fast-paced, results-oriented, competitive, and driven by clear objectives."
+      },
+      I: {
+        title: "Influence",
+        animal: "Peacock",
+        emoji: "🦚",
+        color: "from-yellow-400 to-amber-500",
+        bgLight: "bg-amber-50",
+        textColor: "text-amber-700",
+        summary: "You are charismatic, energetic, and highly outgoing. You love motivating others, sharing visionary ideas, and bringing a vibrant, positive spark to any room. Your enthusiasm is contagious, making you an exceptional communicator and a powerful team builder. You excel in environments where you can collaborate, brainstorm, and persuade, often using your charm and optimism to navigate difficulties and keep the group's morale soaring.",
+        leadership: "They need a leader who provides social recognition, ample opportunities to collaborate, and a fun, energetic work environment. They thrive under leaders who keep rules relatively flexible, celebrate their creative ideas, and offer public praise.",
+        jobs: "Public Relations, Event Planner, Teacher, Marketer, Designer.",
+        team: "Enthusiastic, highly communicative, creative, and socially engaging."
+      },
+      S: {
+        title: "Steadiness",
+        animal: "Dove",
+        emoji: "🕊️",
+        color: "from-green-400 to-emerald-500",
+        bgLight: "bg-emerald-50",
+        textColor: "text-emerald-700",
+        summary: "You are deeply loyal, patient, and incredibly supportive. You serve as the essential glue that holds the team together, always listening intently and ensuring that everyone feels valued and heard. You bring a calm, steady, and reliable presence to any situation, especially during stressful times. You prefer predictable routines and harmonious environments, working diligently behind the scenes to maintain balance and foster genuine, long-lasting relationships.",
+        leadership: "They need a leader who offers a highly supportive, stable environment with perfectly clear expectations. They thrive when given sincere, private appreciation for their loyalty and need leaders who communicate clearly to avoid sudden, disruptive changes.",
+        jobs: "Counselor, HR Specialist, Nurse, Customer Support, Social Worker.",
+        team: "Harmonious, cooperative, deeply loyal, and focused on mutual support."
+      },
+      C: {
+        title: "Conscientiousness",
+        animal: "Owl",
+        emoji: "🦉",
+        color: "from-blue-500 to-indigo-500",
+        bgLight: "bg-blue-50",
+        textColor: "text-blue-700",
+        summary: "You are precise, highly analytical, and exceptionally organized. You naturally focus on the finer details, ensuring rigorous high quality and accuracy in everything you produce. You are a thoughtful, systematic planner who relies heavily on logic, data, and established facts to make informed decisions. You value structure and clear expectations, consistently producing work that is reliable, well-researched, and carefully considered before execution.",
+        leadership: "They need a leader who gives detailed instructions, allows sufficient time to process complex information, and respects their need for extremely high standards. They respond best to data-driven, objective feedback and respect for their professional boundaries.",
+        jobs: "Data Analyst, Engineer, Accountant, Researcher, Programmer.",
+        team: "Organized, analytical, detail-oriented, and highly focused on quality and accuracy."
+      }
+    };
+
+    const state = {
+      screen: "start",
+      qIndex: 0,
+      scores: { D: 0, I: 0, S: 0, C: 0 }
+    };
+
+    const root = document.getElementById("root");
+
+    function getDominantType() {
+      const { scores } = state;
+      return Object.keys(scores).reduce((a, b) => (scores[a] > scores[b] ? a : b));
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+    }
+
+    /** Your public GitHub repo (https only, no trailing slash). "" = hide footer link. */
+    const GITHUB_REPO_URL = "";
+
+    function githubLinkHtml() {
+      if (!GITHUB_REPO_URL || !GITHUB_REPO_URL.startsWith("https://github.com/")) return "";
+      const u = escapeHtml(GITHUB_REPO_URL);
+      return `<p class="mt-8 text-center text-sm text-slate-500"><a href="${u}" class="underline decoration-slate-400 hover:text-slate-800" target="_blank" rel="noopener noreferrer">View source on GitHub</a></p>`;
+    }
+
+    function render() {
+      const { screen, qIndex, scores } = state;
+
+      if (screen === "start") {
+        root.innerHTML = `
+          <div class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 flex items-center justify-center p-6 font-sans">
+            <div class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden p-8 md:p-12 text-center transform transition-all hover:scale-[1.02]">
+              <div class="w-24 h-24 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-6 tracking-tight">DISC Personality Assessment</h1>
+              <p class="text-lg text-gray-600 mb-10 leading-relaxed">
+                Discover your unique working style and team dynamics. There are no right or wrong answers—just choose the option that best describes how you naturally act!
+              </p>
+              <button type="button" id="btnStart" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xl font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
+                Start the Assessment
+              </button>
+              ${githubLinkHtml()}
+            </div>
+          </div>`;
+        document.getElementById("btnStart").onclick = () => {
+          state.scores = { D: 0, I: 0, S: 0, C: 0 };
+          state.qIndex = 0;
+          state.screen = "quiz";
+          render();
+        };
+        return;
+      }
+
+      if (screen === "quiz") {
+        const currentQ = questions[qIndex];
+        const progress = (qIndex / questions.length) * 100;
+        const opts = currentQ.options
+          .map(
+            (option, index) => `
+            <button type="button" data-type="${option.type}" class="text-left p-6 rounded-2xl border-2 border-slate-100 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1 group opt-btn
+              ${["hover:bg-red-50 hover:border-red-300", "hover:bg-amber-50 hover:border-amber-300", "hover:bg-emerald-50 hover:border-emerald-300", "hover:bg-blue-50 hover:border-blue-300"][index]}">
+              <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center mr-4 group-hover:bg-white font-bold text-slate-500 transition-colors">${String.fromCharCode(65 + index)}</div>
+                <span class="text-lg text-slate-700 font-medium">${escapeHtml(option.text)}</span>
+              </div>
+            </button>`
+          )
+          .join("");
+
+        root.innerHTML = `
+          <div class="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 sm:p-6 font-sans">
+            <div class="max-w-3xl w-full">
+              <div class="mb-8">
+                <div class="flex justify-between text-sm font-bold text-slate-500 mb-2 px-2">
+                  <span>Question ${qIndex + 1} of ${questions.length}</span>
+                  <span>${Math.round(progress)}% Completed</span>
+                </div>
+                <div class="h-4 w-full bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500 ease-out" style="width:${progress}%"></div>
+                </div>
+              </div>
+              <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-10">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-8 text-center leading-tight">${escapeHtml(currentQ.question)}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${opts}</div>
+              </div>
+              ${githubLinkHtml()}
+            </div>
+          </div>`;
+
+        root.querySelectorAll(".opt-btn").forEach((btn) => {
+          btn.onclick = () => {
+            const type = btn.getAttribute("data-type");
+            state.scores[type] += 1;
+            if (state.qIndex < questions.length - 1) {
+              state.qIndex += 1;
+            } else {
+              state.screen = "result";
+            }
+            render();
+          };
+        });
+        return;
+      }
+
+      const dominantType = getDominantType();
+      const result = resultsData[dominantType];
+
+      root.innerHTML = `
+        <div class="min-h-screen ${result.bgLight} py-12 px-4 sm:px-6 flex items-center justify-center font-sans transition-colors duration-1000">
+          <div class="max-w-4xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border-t-8 border-transparent">
+            <div class="bg-gradient-to-r ${result.color} p-10 text-white text-center relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                <svg class="absolute w-64 h-64 -top-10 -left-10" fill="currentColor" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"/></svg>
+                <svg class="absolute w-48 h-48 bottom-10 -right-10" fill="currentColor" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"/></svg>
+              </div>
+              <div class="relative z-10 flex flex-col items-center">
+                <div class="text-8xl sm:text-9xl mb-4 filter drop-shadow-lg transform hover:scale-110 transition-transform duration-300">${result.emoji}</div>
+                <h2 class="text-xl font-medium tracking-widest uppercase mb-2 opacity-90">Your Results Are In!</h2>
+                <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">The ${escapeHtml(result.animal)}</h1>
+                <div class="inline-block px-6 py-2 bg-white/20 backdrop-blur-md rounded-full text-lg font-bold shadow-sm">
+                  Type ${dominantType}: ${escapeHtml(result.title)}
+                </div>
+              </div>
+            </div>
+            <div class="p-8 sm:p-12">
+              <div class="mb-10 text-center">
+                <p class="text-xl sm:text-2xl font-medium ${result.textColor} leading-relaxed italic">"${escapeHtml(result.summary)}"</p>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
+                  <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r ${result.color} flex items-center justify-center text-white mr-3">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">What They Need in a Leader</h3>
+                  </div>
+                  <p class="text-slate-600 leading-relaxed">${escapeHtml(result.leadership)}</p>
+                </div>
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
+                  <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r ${result.color} flex items-center justify-center text-white mr-3">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Ideal Team Fit</h3>
+                  </div>
+                  <p class="text-slate-600 leading-relaxed">${escapeHtml(result.team)}</p>
+                </div>
+                <div class="md:col-span-2 bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
+                  <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r ${result.color} flex items-center justify-center text-white mr-3">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Common Roles/Jobs</h3>
+                  </div>
+                  <p class="text-slate-600 leading-relaxed">${escapeHtml(result.jobs)}</p>
+                </div>
+              </div>
+              <div class="text-center pt-4 border-t border-slate-100">
+                <button type="button" id="btnRetake" class="px-8 py-3 bg-white border-2 border-slate-200 text-slate-600 text-lg font-bold rounded-full shadow-sm hover:bg-slate-50 hover:shadow-md transition-all duration-300 w-full sm:w-auto">
+                  Retake Assessment
+                </button>
+                ${githubLinkHtml()}
+              </div>
+            </div>
+          </div>
+        </div>`;
+      document.getElementById("btnRetake").onclick = () => {
+        state.scores = { D: 0, I: 0, S: 0, C: 0 };
+        state.qIndex = 0;
+        state.screen = "quiz";
+        render();
+      };
+    }
+
+    render();
+  </script>
+</body>
+</html>
